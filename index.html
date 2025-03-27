@@ -4,21 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Киберспортивный турнир</title>
+  <!-- Подключаем внешний файл стилей -->
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <header>
-    <img src="images/logo.png" alt="Логотип турнира" class="logo">
-    <h1 id="siteTitle">Киберспортивный турнир</h1>
-    <p id="siteDescription">Список участников и информация о турнире</p>
-  </header>
-
-  <main>
-    <section id="participants">
-      <!-- Здесь будут динамически подгружаться данные об участниках -->
+  <!-- Основной контейнер сайта -->
+  <div id="mainContent" class="container">
+    <header>
+      <img src="images/logo.png" alt="Логотип турнира" class="logo">
+      <h1 id="siteTitle">Киберспортивный турнир</h1>
+      <p id="siteDescription">Список участников и информация о турнире</p>
+    </header>
+    
+    <!-- Секция для списка участников -->
+    <section id="participants" class="participant-list">
+      <!-- Здесь динамически подгружаются данные об участниках -->
     </section>
-  </main>
-
+  </div>
+  
+  <!-- Модальное окно для отображения карточки участника -->
+  <div id="modalOverlay" class="modal-overlay"></div>
+  <div id="participantModal" class="participant-modal">
+    <div class="modal-content">
+      <button class="close-button">&times;</button>
+      <div class="participant-details">
+        <div class="participant-photo">
+          <img id="modalParticipantPhoto" src="images/default-avatar.png" alt="Фото участника">
+        </div>
+        <div class="participant-info">
+          <h2 id="modalParticipantName" class="modal-title">Имя участника</h2>
+          <table class="details-table">
+            <tr>
+              <td class="label">Страна:</td>
+              <td id="modalParticipantCountry">Страна участника</td>
+            </tr>
+            <tr>
+              <td class="label">Статус:</td>
+              <td>
+                <span id="modalParticipantStatusBadge" class="status-badge"></span>
+                <span id="modalParticipantStatus">Статус участника</span>
+              </td>
+            </tr>
+          </table>
+          <div class="info-block">
+            <h3>Информация</h3>
+            <div id="modalParticipantInfo">Информация об участнике будет здесь</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Подключаем основной JavaScript, который подгружает данные -->
   <script src="assets/js/main.js"></script>
+  <!-- Подключаем скрипт, отвечающий за модальное окно -->
+  <script src="assets/js/modal.js"></script>
 </body>
 </html>
