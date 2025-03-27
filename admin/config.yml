@@ -1,19 +1,11 @@
 backend:
-  name: github
-  repo: ваш-username/имя-репозитория
+  name: git-gateway
   branch: main
 
 media_folder: "images/uploads"
 public_folder: "/images/uploads"
 
 collections:
-  - name: "settings"
-    label: "Настройки сайта"
-    folder: "content/settings"
-    create: false
-    fields:
-      - { label: "Заголовок", name: "title", widget: "string" }
-      - { label: "Описание", name: "description", widget: "string" }
   - name: "participants"
     label: "Участники"
     folder: "content/participants"
