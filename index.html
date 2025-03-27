@@ -4,25 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Киберспортивный турнир</title>
-  <!-- Подключаем внешний файл стилей -->
+  <!-- Подключение стилей -->
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <!-- Основной контейнер сайта -->
-  <div id="mainContent" class="container">
-    <header>
-      <img src="images/logo.png" alt="Логотип турнира" class="logo">
-      <h1 id="siteTitle">Киберспортивный турнир</h1>
-      <p id="siteDescription">Список участников и информация о турнире</p>
-    </header>
-    
-    <!-- Секция для списка участников -->
+  <header>
+    <img src="images/logo.png" alt="Логотип турнира" class="logo">
+    <h1 id="siteTitle">Киберспортивный турнир</h1>
+    <p id="siteDescription">Список участников и информация о турнире</p>
+  </header>
+
+  <main class="container">
+    <!-- Секция для списка участников (карточки генерируются динамически) -->
     <section id="participants" class="participant-list">
-      <!-- Здесь динамически подгружаются данные об участниках -->
+      <!-- Здесь через JS будет подгружаться контент -->
     </section>
-  </div>
-  
-  <!-- Модальное окно для отображения карточки участника -->
+  </main>
+
+  <!-- Модальное окно для карточки участника -->
   <div id="modalOverlay" class="modal-overlay"></div>
   <div id="participantModal" class="participant-modal">
     <div class="modal-content">
@@ -54,10 +53,9 @@
       </div>
     </div>
   </div>
-  
-  <!-- Подключаем основной JavaScript, который подгружает данные -->
+
+  <!-- Подключение скриптов -->
   <script src="assets/js/main.js"></script>
-  <!-- Подключаем скрипт, отвечающий за модальное окно -->
   <script src="assets/js/modal.js"></script>
 </body>
 </html>

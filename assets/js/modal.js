@@ -2,7 +2,7 @@
 
 // Функция открытия модального окна участника
 function openParticipantModal(id) {
-    // Предполагается, что массив participants уже загружен (например, через другой скрипт)
+    // Предполагается, что глобальный массив participants уже загружен
     const participant = participants.find(p => p.id === id);
     if (!participant) {
         console.error('Участник с ID', id, 'не найден');
@@ -36,7 +36,7 @@ function openParticipantModal(id) {
         console.error('Ошибка при установке фото:', e);
     }
 
-    // Отображение модального окна и затемнения
+    // Отображаем модальное окно и overlay
     document.getElementById('modalOverlay').style.display = 'block';
     document.getElementById('participantModal').style.display = 'block';
     document.body.style.overflow = 'hidden';
@@ -58,7 +58,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Функция для обновления обработчиков карточек участников (если они динамически генерируются)
+// Функция для установки обработчиков кликов по карточкам участников (вызывается после генерации карточек)
 function updateParticipantCards() {
     const cards = document.querySelectorAll('.participant');
     cards.forEach(card => {
@@ -72,6 +72,3 @@ function updateParticipantCards() {
         });
     });
 }
-
-// Экспорт функций, если требуется (например, для использования в других модулях)
-// export { openParticipantModal, closeParticipantModal, updateParticipantCards };

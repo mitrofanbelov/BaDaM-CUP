@@ -1,32 +1,32 @@
 // assets/js/main.js
+
+// Пример: глобальный массив участников (для демонстрации; на практике данные можно загружать с сервера или из файлов)
+const participants = [
+    { id: 1, name: "Александр 'S1mple' Костылев", country: "Украина", status: "confirmed", info: "Описание участника 1", photo: "images/players/1.jpg" },
+    { id: 2, name: "Даниил 'Zeus' Тесленко", country: "Украина", status: "live", info: "Описание участника 2", photo: "images/players/2.jpg" }
+];
+
+// Функция для рендеринга карточек участников
+function renderParticipants() {
+    const participantList = document.getElementById('participants');
+    participantList.innerHTML = '';
+    participants.forEach(participant => {
+        const card = document.createElement('div');
+        card.className = 'participant';
+        card.dataset.id = participant.id;
+        card.innerHTML = `
+            <div class="participant-name">
+              <span class="status ${participant.status === 'confirmed' ? 'confirmed' : 'live'}"></span>
+              ${participant.name}
+            </div>
+            <div class="participant-country">${participant.country}</div>
+        `;
+        participantList.appendChild(card);
+    });
+    updateParticipantCards();
+}
+
+// Инициализация страницы
 document.addEventListener('DOMContentLoaded', function() {
-    // Загрузка настроек сайта
-    fetch('content/settings/settings.json')
-      .then(response => response.json())
-      .then(settings => {
-        document.getElementById('siteTitle').textContent = settings.title;
-        document.getElementById('siteDescription').textContent = settings.description;
-      })
-      .catch(error => console.error('Ошибка загрузки настроек:', error));
-  
-    // Загрузка списка участников
-    fetch('content/participants/participants.json')
-      .then(response => response.json())
-      .then(participants => {
-        const participantsSection = document.getElementById('participants');
-        participants.forEach(participant => {
-          const participantDiv = document.createElement('div');
-          participantDiv.className = 'participant';
-          participantDiv.innerHTML = `
-            <h2>${participant.name}</h2>
-            <p><strong>Страна:</strong> ${participant.country}</p>
-            <p><strong>Статус:</strong> ${participant.status === 'confirmed' ? 'Гарантированно участвует' : 'Проходит в лайв-формате'}</p>
-            <p>${participant.info}</p>
-            <img src="${participant.photo}" alt="${participant.name}">
-          `;
-          participantsSection.appendChild(participantDiv);
-        });
-      })
-      .catch(error => console.error('Ошибка загрузки участников:', error));
-  });
-  
+    renderParticipants();
+});
