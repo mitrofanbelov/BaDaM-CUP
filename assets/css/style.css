@@ -8,7 +8,8 @@
 
 body {
     background-color: #1a1a2e;
-    background-image: url('../images/background.png?v=1');
+    background-image: url('../../images/background.png');
+
     background-size: cover;
     background-attachment: fixed;
     background-position: center center;
