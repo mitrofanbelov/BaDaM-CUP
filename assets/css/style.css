@@ -1,0 +1,42 @@
+/* assets/css/style.css */
+body {
+    background-color: #1a1a2e;
+    background-image: url('../images/background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    color: #ffffff;
+    padding: 20px;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  header {
+    text-align: center;
+    padding: 30px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 30px;
+  }
+  
+  .logo {
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  
+  .participant {
+    background-color: rgba(22, 33, 62, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .participant img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  /* Дополнительные стили можно добавить по мере необходимости */
+  
