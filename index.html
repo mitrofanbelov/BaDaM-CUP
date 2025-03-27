@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Киберспортивный турнир</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #1a1a2e; /* Цвет по умолчанию, если изображение не загрузится */
+            background-image: url('images/background.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center center;
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: rgba(22, 33, 62, 0.8);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            margin: 0 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: #e94560;
+        }
+        
+        .tab:hover {
+            background-color: #0f3460;
+        }
+        
+        .participant-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px;
+            position: relative;
+        }
+        
+        .participant {
+            background-color: rgba(22, 33, 62, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .participant:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .participant-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .participant-country {
+            font-size: 0.9rem;
+            color: #b0b0b0;
+        }
+        
+        .status {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status.confirmed {
+            background-color: #4CAF50;
+            animation: blink 1.5s infinite;
+        }
+        
+        .status.live {
+            background-color: #FFC107;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9000;
+            display: none;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(22, 33, 62, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            z-index: 9500;
+            min-width: 350px;
+            max-width: 600px;
+            width: 90%;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            border: none;
+            background: transparent;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        
+        .admin-panel {
+            background-color: rgba(22, 33, 62, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .admin-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(74, 74, 106, 0.5);
+            background-color: rgba(26, 26, 46, 0.7);
+            color: #ffffff;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #e94560;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #d63447;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #b0b0b0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+            gap: 10px;
+        }
+        
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .edit-btn {
+            background-color: #2196F3;
+        }
+        
+        .delete-btn {
+            background-color: #f44336;
+        }
+        
+        .participant:hover .edit-btn,
+        .participant:hover .delete-btn {
+            opacity: 1;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: rgba(22, 33, 62, 0.9);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .login-logo {
+            display: block;
+            margin: 0 auto 30px;
+            max-width: 200px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .login-btn {
+            margin-top: 15px;
+        }
+        
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .alert-danger {
+            background-color: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #f44336;
+        }
+        
+        .participant-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        #searchInput {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid rgba(74, 74, 106, 0.5);
+            background-color: rgba(26, 26, 46, 0.7);
+            color: #ffffff;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            background-color: rgba(22, 33, 62, 0.8);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+        
+        .admin-tab.active {
+            background-color: #e94560;
+        }
+        
+        .admin-tab-content {
+            display: none;
+        }
+        
+        .admin-tab-content.active {
+            display: block;
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            font-size: 14px;
+            background-color: rgba(22, 33, 62, 0.7);
+            z-index: 1000;
+        }
+
+        /* Стили для модального окна с информацией об участнике */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .participant-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1f2a44;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+            z-index: 9500;
+            width: 90%;
+            max-width: 800px;
+            overflow: hidden;
+            animation: modalFadeIn 0.4s ease;
+        }
+        
+        .modal-content {
+            padding: 30px;
+            position: relative;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .close-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .participant-details {
+            display: flex;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .participant-details {
+                flex-direction: column;
+            }
+        }
+        
+        .participant-photo {
+            flex: 0 0 200px;
+        }
+        
+        .participant-photo img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+            aspect-ratio: 1/1;
+        }
+        
+        .participant-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+        
+        .country, .status-container {
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: block;
+        }
+        
+        .label {
+            font-weight: bold;
+            color: #b0b0b0;
+            display: inline-block;
+            width: 80px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        .status-badge.confirmed {
+            background-color: #4CAF50;
+        }
+        
+        .status-badge.live {
+            background-color: #FFC107;
+        }
+        
+        .info-block {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            display: block;
+        }
+        
+        .info-block h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #b0b0b0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Основной контент сайта -->
+    <div id="mainContent" class="container">
+        <header>
+            <img src="images/logo.png" alt="Логотип турнира" class="logo">
+            <p>Список участников и информация о турнире</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" data-category="all">Все участники</button>
+            <button class="tab" data-category="confirmed">Гарантированно участвуют</button>
+            <button class="tab" data-category="live">Проходят в лайв-формате</button>
+        </div>
+        
+        <div class="participant-list-header">
+            <h2>Участники турнира</h2>
+            <input type="text" id="searchInput" placeholder="Поиск по имени или стране">
+        </div>
+        
+        <div class="participants-container">
+            <div class="participant-list" id="participantList">
+                <!-- Участники будут добавлены с помощью JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Страница авторизации администратора - скрыта по умолчанию -->
+    <div id="loginPage" class="container" style="display: none;">
+        <div class="login-container">
+            <img src="images/logo.png" alt="Логотип турнира" class="login-logo">
+            <h2>Вход для администратора</h2>
+            <div id="loginAlert" class="alert alert-danger">Неверный логин или пароль</div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-btn">Войти</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Панель администратора - скрыта по умолчанию -->
+    <div id="adminPage" class="container" style="display: none;">
+        <header>
+            <img src="images/logo.png" alt="Логотип турнира" class="logo">
+            <h1>Панель администратора</h1>
+        </header>
+        
+        <button id="logoutBtn" class="logout-btn">Выйти</button>
+        
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="participants">Управление участниками</button>
+            <button class="admin-tab" data-tab="settings">Настройки</button>
+        </div>
+        
+        <div id="participantsTab" class="admin-tab-content active">
+            <div class="admin-panel">
+                <h2>Добавить участника</h2>
+                <form id="adminForm" class="admin-form">
+                    <div class="form-group">
+                        <label for="participantName">Имя участника</label>
+                        <input type="text" id="participantName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="participantCountry">Страна</label>
+                        <input type="text" id="participantCountry" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="participantStatus">Статус</label>
+                        <select id="participantStatus" required>
+                            <option value="confirmed">Гарантированно участвует</option>
+                            <option value="live">Проходит в лайв-формате</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="participantInfo">Информация (для всплывающего окна)</label>
+                        <textarea id="participantInfo" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" id="addParticipantBtn">Добавить участника</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="admin-panel" style="margin-top: 30px;">
+                <h2>Список участников</h2>
+                <div class="tabs">
+                    <button class="tab active" data-admin-category="all">Все участники</button>
+                    <button class="tab" data-admin-category="confirmed">Гарантированно участвуют</button>
+                    <button class="tab" data-admin-category="live">Проходит в лайв-формате</button>
+                </div>
+                <div id="adminParticipantList">
+                    <!-- Список участников для редактирования будет тут -->
+                </div>
+            </div>
+        </div>
+        
+        <div id="settingsTab" class="admin-tab-content">
+            <div class="admin-panel">
+                <h2>Основные настройки</h2>
+                <form id="settingsForm" class="admin-form">
+                    <div class="form-group">
+                        <label for="siteTitle">Заголовок сайта</label>
+                        <input type="text" id="siteTitle" value="Киберспортивный турнир">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="siteDescription">Подзаголовок</label>
+                        <input type="text" id="siteDescription" value="Список участников и информация о турнире">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminUsername">Логин администратора</label>
+                        <input type="text" id="adminUsername" value="admin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminPassword">Пароль администратора</label>
+                        <input type="password" id="adminPassword" value="password" placeholder="Введите новый пароль">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit">Сохранить настройки</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для редактирования участника -->
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal" id="editModal">
+        <button class="close-modal" id="closeModal">&times;</button>
+        <div class="modal-header">
+            <h3 class="modal-title">Редактирование участника</h3>
+        </div>
+        <form id="editForm">
+            <input type="hidden" id="editParticipantId">
+            <div class="form-group">
+                <label for="editName">Имя участника</label>
+                <input type="text" id="editName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="editCountry">Страна</label>
+                <input type="text" id="editCountry" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="editStatus">Статус</label>
+                <select id="editStatus" required>
+                    <option value="confirmed">Гарантированно участвует</option>
+                    <option value="live">Проходит в лайв-формате</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="editInfo">Информация</label>
+                <textarea id="editInfo" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit">Сохранить изменения</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Затемняющий фон для модальных окон -->
+    <div id="modalOverlay" class="modal-overlay"></div>
+
+    <!-- Модальное окно с информацией об участнике (исправленные id) -->
+    <div id="participantModal" class="participant-modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeParticipantModal()">&times;</button>
+            <div class="participant-details">
+                <div class="participant-photo">
+                    <img id="modalParticipantPhoto" src="images/default-avatar.png" alt="Фото участника">
+                </div>
+                <div class="participant-info">
+                    <h2 id="modalParticipantName" class="modal-title">Имя участника</h2>
+                    
+                    <table class="details-table">
+                        <tr>
+                            <td class="label">Страна:</td>
+                            <td id="modalParticipantCountry">Страна участника</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Статус:</td>
+                            <td>
+                                <span id="modalParticipantStatusBadge" class="status-badge"></span>
+                                <span id="modalParticipantStatus">Статус участника</span>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <div class="info-block">
+                        <h3>Информация</h3>
+                        <div id="modalParticipantInfo">Информация об участнике будет здесь</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* Дополнительные стили для таблицы в модальном окне */
+    .details-table {
+        width: 100%;
+        margin-bottom: 15px;
+        border-collapse: collapse;
+    }
+
+    .details-table td {
+        padding: 8px 0;
+    }
+
+    .details-table .label {
+        font-weight: bold;
+        color: #b0b0b0;
+        width: 80px;
+    }
+    </style>
+    <script>
+        // Модель данных - начальные участники
+        let participants = [
+            {
+                id: 1,
+                name: "Александр 'S1mple' Костылев",
+                country: "Украина",
+                status: "confirmed",
+                info: "Один из лучших игроков в CS:GO. Гарантированно участвует в турнире благодаря высокому рейтингу и победам на предыдущих чемпионатах."
+            },
+            {
+                id: 2,
+                name: "Даниил 'Zeus' Тесленко",
+                country: "Украина",
+                status: "live",
+                info: "Опытный игрок и капитан команды. Прошел отборочные туры и получил право участвовать в лайв-формате турнира."
+            },
+            {
+                id: 3,
+                name: "Михаил 'Dosia' Столяров",
+                country: "Россия",
+                status: "confirmed",
+                info: "Опытный игрок с множеством титулов. Приглашен на турнир как чемпион прошлого сезона."
+            },
+            {
+                id: 4,
+                name: "Oleksandr 'S1mple' Kostyliev",
+                country: "Украина",
+                status: "confirmed",
+                info: "Признанный лучшим игроком CS:GO в 2021 году. Гарантированная квота на турнире из-за высокого рейтинга HLTV."
+            }
+        ];
+
+        // Настройки сайта
+        let siteSettings = {
+            title: "Киберспортивный турнир",
+            description: "Список участников и информация о турнире",
+            adminUsername: "admin",
+            adminPassword: "admin123"
+        };
+
+        // Переменная для отслеживания авторизации
+        let isAuthenticated = false;
+        
+        // Переменная для идентификатора следующего участника
+        let nextParticipantId = 5;
+
+        // Функция для отображения участников (основная страница)
+        function renderParticipants(filteredList = null) {
+            const participantList = document.getElementById('participantList');
+            participantList.innerHTML = '';
+            
+            const list = filteredList || participants;
+            
+            if (list.length === 0) {
+                participantList.innerHTML = '<div class="empty-message">Нет участников в данной категории</div>';
+                return;
+            }
+            
+            list.forEach(participant => {
+                const participantElement = document.createElement('div');
+                participantElement.className = 'participant';
+                participantElement.dataset.id = participant.id;
+                
+                const statusClass = participant.status === 'confirmed' ? 'confirmed' : 'live';
+                const statusLabel = participant.status === 'confirmed' ? 'Гарантированно участвует' : 'Проходит в лайв-формате';
+                
+                participantElement.innerHTML = `
+                    <div class="participant-name">
+                        <span class="status ${statusClass}" title="${statusLabel}"></span>
+                        ${participant.name}
+                    </div>
+                    <div class="participant-country">${participant.country}</div>
+                `;
+                
+                participantList.appendChild(participantElement);
+            });
+            
+            // Обновляем карточки, чтобы добавить обработчик клика
+            updateParticipantCards();
+        }
+        
+        // Функция для отображения участников (панель администратора)
+        function renderAdminParticipants(filteredList = null) {
+            const adminParticipantList = document.getElementById('adminParticipantList');
+            adminParticipantList.innerHTML = '';
+            
+            const list = filteredList || participants;
+            
+            if (list.length === 0) {
+                adminParticipantList.innerHTML = '<div class="empty-message">Нет участников в данной категории</div>';
+                return;
+            }
+            
+            list.forEach(participant => {
+                const participantElement = document.createElement('div');
+                participantElement.className = 'participant';
+                participantElement.dataset.id = participant.id;
+                
+                const statusClass = participant.status === 'confirmed' ? 'confirmed' : 'live';
+                const statusLabel = participant.status === 'confirmed' ? 'Гарантированно участвует' : 'Проходит в лайв-формате';
+                
+                participantElement.innerHTML = `
+                    <div class="participant-name">
+                        <span class="status ${statusClass}" title="${statusLabel}"></span>
+                        ${participant.name}
+                    </div>
+                    <div class="participant-country">${participant.country}</div>
+                    <div class="action-buttons">
+                        <button class="edit-btn" data-id="${participant.id}">Редактировать</button>
+                        <button class="delete-btn" data-id="${participant.id}">Удалить</button>
+                    </div>
+                `;
+                
+                adminParticipantList.appendChild(participantElement);
+            });
+            
+            // Добавляем обработчики событий для кнопок редактирования и удаления
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    openEditModal(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    deleteParticipant(id);
+                });
+            });
+        }
+        
+        // Функция фильтрации участников (основная страница)
+        function filterParticipants(category) {
+            if (category === 'all') {
+                renderParticipants();
+                return;
+            }
+            
+            const filtered = participants.filter(participant => participant.status === category);
+            renderParticipants(filtered);
+        }
+        
+        // Функция фильтрации участников (панель администратора)
+        function filterAdminParticipants(category) {
+            if (category === 'all') {
+                renderAdminParticipants();
+                return;
+            }
+            
+            const filtered = participants.filter
+            (participant => participant.status === category);
+            renderAdminParticipants(filtered);
+        }
+        
+        // Функция поиска участников
+        function searchParticipants(query) {
+            if (!query) {
+                const activeTab = document.querySelector('.tab.active');
+                const category = activeTab.getAttribute('data-category');
+                filterParticipants(category);
+                return;
+            }
+            
+            query = query.toLowerCase();
+            const filtered = participants.filter(participant => 
+                participant.name.toLowerCase().includes(query) || 
+                participant.country.toLowerCase().includes(query)
+            );
+            
+            renderParticipants(filtered);
+        }
+        
+        // Функция для открытия модального окна с информацией об участнике (исправленная версия)
+        function openParticipantModal(id) {
+            // Находим участника по ID
+            const participant = participants.find(p => p.id === id);
+            if (!participant) {
+                console.error('Участник с ID', id, 'не найден');
+                return;
+            }
+            
+            // Очищаем все элементы перед заполнением
+            document.getElementById('modalParticipantName').textContent = '';
+            document.getElementById('modalParticipantCountry').textContent = '';
+            document.getElementById('modalParticipantInfo').textContent = '';
+            
+            // Заполняем информацию в модальном окне
+            document.getElementById('modalParticipantName').textContent = participant.name;
+            
+            // Устанавливаем страну
+            const countryElement = document.getElementById('modalParticipantCountry');
+            if (!countryElement) {
+                console.error('Элемент modalParticipantCountry не найден');
+            } else {
+                countryElement.textContent = participant.country;
+                if (countryElement.parentElement) {
+                    countryElement.parentElement.style.display = 'block';
+                }
+            }
+            
+            // Устанавливаем статус
+            const statusBadge = document.getElementById('modalParticipantStatusBadge');
+            const statusText = document.getElementById('modalParticipantStatus');
+            if (!statusBadge || !statusText) {
+                console.error('Элементы статуса модального окна не найдены');
+            } else {
+                if (participant.status === 'confirmed') {
+                    statusBadge.className = 'status-badge confirmed';
+                    statusText.textContent = 'Гарантированно участвует';
+                } else {
+                    statusBadge.className = 'status-badge live';
+                    statusText.textContent = 'Проходит в лайв-формате';
+                }
+            }
+            
+            // Устанавливаем информацию
+            const infoElement = document.getElementById('modalParticipantInfo');
+            if (!infoElement) {
+                console.error('Элемент modalParticipantInfo не найден');
+            } else {
+                infoElement.textContent = participant.info;
+                if (infoElement.parentElement) {
+                    infoElement.parentElement.style.display = 'block';
+                }
+            }
+            
+            // Устанавливаем фото
+            const photoElement = document.getElementById('modalParticipantPhoto');
+            if (!photoElement) {
+                console.error('Элемент modalParticipantPhoto не найден');
+            } else {
+                try {
+                    photoElement.src = `images/players/${participant.id}.jpg`;
+                    photoElement.onerror = function() {
+                        this.src = 'images/default-avatar.png';
+                    };
+                } catch (e) {
+                    photoElement.src = 'images/default-avatar.png';
+                    console.error('Ошибка при установке фото:', e);
+                }
+            }
+            
+            // Показываем модальное окно и затемнение
+            const modalOverlay = document.getElementById('modalOverlay');
+            const participantModal = document.getElementById('participantModal');
+            if (!modalOverlay || !participantModal) {
+                console.error('Элементы модального окна не найдены');
+                return;
+            }
+            
+            modalOverlay.style.display = 'block';
+            participantModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Функция для закрытия модального окна
+        function closeParticipantModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('participantModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Функция для обновления карточек участников с добавлением обработчика клика
+        function updateParticipantCards() {
+            const cards = document.querySelectorAll('.participant');
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('edit-btn') || e.target.classList.contains('delete-btn')) {
+                        return;
+                    }
+                    const id = parseInt(this.dataset.id);
+                    openParticipantModal(id);
+                });
+            });
+        }
+        
+        // Функция для открытия модального окна редактирования
+        function openEditModal(id) {
+            const participant = participants.find(p => p.id === id);
+            if (!participant) return;
+            
+            document.getElementById('editParticipantId').value = participant.id;
+            document.getElementById('editName').value = participant.name;
+            document.getElementById('editCountry').value = participant.country;
+            document.getElementById('editStatus').value = participant.status;
+            document.getElementById('editInfo').value = participant.info;
+            
+            document.getElementById('modalBackdrop').style.display = 'block';
+            document.getElementById('editModal').style.display = 'block';
+        }
+        
+        // Функция для закрытия модального окна редактирования
+        function closeModal() {
+            document.getElementById('modalBackdrop').style.display = 'none';
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        // Функция для удаления участника
+        function deleteParticipant(id) {
+            if (confirm('Вы уверены, что хотите удалить этого участника?')) {
+                participants = participants.filter(p => p.id !== id);
+                saveToLocalStorage();
+                renderParticipants();
+                const adminCategoryTab = document.querySelector('[data-admin-category].active');
+                if (adminCategoryTab) {
+                    const category = adminCategoryTab.getAttribute('data-admin-category');
+                    filterAdminParticipants(category);
+                } else {
+                    renderAdminParticipants();
+                }
+            }
+        }
+        // Функция для проверки авторизации
+        function checkAuth() {
+            const authData = localStorage.getItem('authToken');
+            if (authData) {
+                try {
+                    const { username, expiration } = JSON.parse(authData);
+                    if (expiration > Date.now()) {
+                        isAuthenticated = true;
+                        return true;
+                    } else {
+                        localStorage.removeItem('authToken');
+                    }
+                } catch (e) {
+                    localStorage.removeItem('authToken');
+                }
+            }
+            isAuthenticated = false;
+            return false;
+        }
+        
+        // Функция для генерации авторизационного токена
+        function generateAuthToken(username) {
+            const token = {
+                username: username,
+                expiration: Date.now() + 24 * 60 * 60 * 1000
+            };
+            localStorage.setItem('authToken', JSON.stringify(token));
+            isAuthenticated = true;
+        }
+        
+        // Функция для выхода из аккаунта
+        function logout() {
+            localStorage.removeItem('authToken');
+            isAuthenticated = false;
+            showPage('mainContent');
+        }
+        
+        // Функция для отображения нужной страницы
+        function showPage(pageId) {
+            console.log("Показываем страницу:", pageId);
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('adminPage').style.display = 'none';
+            document.getElementById(pageId).style.display = 'block';
+        }
+        
+        // Функция сохранения данных в localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('participants', JSON.stringify(participants));
+            localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+            localStorage.setItem('nextParticipantId', nextParticipantId);
+        }
+        
+        // Функция загрузки данных из localStorage
+        function loadFromLocalStorage() {
+            const savedParticipants = localStorage.getItem('participants');
+            const savedSettings = localStorage.getItem('siteSettings');
+            const savedNextId = localStorage.getItem('nextParticipantId');
+            if (savedParticipants) {
+                participants = JSON.parse(savedParticipants);
+            }
+            if (savedSettings) {
+                siteSettings = JSON.parse(savedSettings);
+                document.title = siteSettings.title;
+                document.querySelector('header p').textContent = siteSettings.description;
+            }
+            if (savedNextId) {
+                nextParticipantId = parseInt(savedNextId);
+            }
+        }
+        
+        // Функция для проверки, нужно ли показать панель администратора
+        function checkAdminAccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const showAdmin = urlParams.get('admin');
+            console.log("Admin parameter:", showAdmin);
+            if (showAdmin === '1') {
+                console.log("Admin mode requested");
+                if (checkAuth()) {
+                    console.log("User authenticated, showing admin page");
+                    showPage('adminPage');
+                } else {
+                    console.log("User not authenticated, showing login page");
+                    showPage('loginPage');
+                }
+                return true;
+            } else {
+                console.log("Normal mode, showing main content");
+                showPage('mainContent');
+                return false;
+            }
+        }
+        
+        // Инициализация приложения
+        function init() {
+            loadFromLocalStorage();
+            checkAdminAccess();
+            renderParticipants();
+            renderAdminParticipants();
+            
+            const backgroundImage = new Image();
+            backgroundImage.onload = function() {
+                console.log("Фоновое изображение успешно загружено");
+            };
+            backgroundImage.onerror = function() {
+                console.error("Ошибка загрузки фонового изображения. Проверьте путь: images/background.jpg");
+                document.body.style.backgroundImage = 'linear-gradient(to bottom, #1a1a2e, #0f0f1a)';
+            };
+            backgroundImage.src = 'images/background.jpg';
+        }
+        // Обработчики событий
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+            
+            // Вкладки на основной странице
+            document.querySelectorAll('.tab[data-category]').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab[data-category]').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const category = tab.getAttribute('data-category');
+                    filterParticipants(category);
+                });
+            });
+            
+            // Вкладки в панели администратора (фильтрация)
+            document.querySelectorAll('.tab[data-admin-category]').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab[data-admin-category]').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const category = tab.getAttribute('data-admin-category');
+                    filterAdminParticipants(category);
+                });
+            });
+            
+            // Вкладки в панели администратора (разделы)
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.admin-tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId + 'Tab').classList.add('active');
+                });
+            });
+            
+            // Поиск участников
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchParticipants(e.target.value);
+            });
+            
+            // Обработчик входа администратора
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                console.log("Попытка входа:", username, password);
+                console.log("Сохраненные данные:", siteSettings.adminUsername, siteSettings.adminPassword);
+                if (username === siteSettings.adminUsername && password === siteSettings.adminPassword) {
+                    console.log("Успешная авторизация");
+                    generateAuthToken(username);
+                    showPage('adminPage');
+                    document.getElementById('loginAlert').style.display = 'none';
+                } else {
+                    console.log("Ошибка авторизации");
+                    document.getElementById('loginAlert').style.display = 'block';
+                }
+            });
+            
+            // Обработчик выхода из аккаунта
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                logout();
+            });
+            
+            // Обработчик добавления участника
+            document.getElementById('adminForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('participantName').value;
+                const country = document.getElementById('participantCountry').value;
+                const status = document.getElementById('participantStatus').value;
+                const info = document.getElementById('participantInfo').value;
+                if (!name || !country || !info) {
+                    alert('Пожалуйста, заполните все поля!');
+                    return;
+                }
+                const newParticipant = {
+                    id: nextParticipantId++,
+                    name: name,
+                    country: country,
+                    status: status,
+                    info: info
+                };
+                participants.push(newParticipant);
+                saveToLocalStorage();
+                document.getElementById('adminForm').reset();
+                renderParticipants();
+                const adminCategoryTab = document.querySelector('[data-admin-category].active');
+                if (adminCategoryTab) {
+                    const category = adminCategoryTab.getAttribute('data-admin-category');
+                    filterAdminParticipants(category);
+                } else {
+                    renderAdminParticipants();
+                }
+                alert('Участник успешно добавлен!');
+            });
+            
+            // Обработчик закрытия модального окна редактирования
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+            
+            // Предотвращаем закрытие модального окна при клике внутри него
+            document.getElementById('editModal').addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Обработчик редактирования участника
+            document.getElementById('editForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = parseInt(document.getElementById('editParticipantId').value);
+                const name = document.getElementById('editName').value;
+                const country = document.getElementById('editCountry').value;
+                const status = document.getElementById('editStatus').value;
+                const info = document.getElementById('editInfo').value;
+                if (!name || !country || !info) {
+                    alert('Пожалуйста, заполните все поля!');
+                    return;
+                }
+                const participantIndex = participants.findIndex(p => p.id === id);
+                if (participantIndex !== -1) {
+                    participants[participantIndex] = {
+                        id: id,
+                        name: name,
+                        country: country,
+                        status: status,
+                        info: info
+                    };
+                    saveToLocalStorage();
+                    renderParticipants();
+                    const adminCategoryTab = document.querySelector('[data-admin-category].active');
+                    if (adminCategoryTab) {
+                        const category = adminCategoryTab.getAttribute('data-admin-category');
+                        filterAdminParticipants(category);
+                    } else {
+                        renderAdminParticipants();
+                    }
+                    closeModal();
+                    alert('Участник успешно обновлен!');
+                }
+            });
+            
+            // Обработчик сохранения настроек
+            document.getElementById('settingsForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const title = document.getElementById('siteTitle').value;
+                const description = document.getElementById('siteDescription').value;
+                const adminUsername = document.getElementById('adminUsername').value;
+                const adminPassword = document.getElementById('adminPassword').value;
+                siteSettings.title = title;
+                siteSettings.description = description;
+                siteSettings.adminUsername = adminUsername;
+                if (adminPassword) {
+                    siteSettings.adminPassword = adminPassword;
+                }
+                document.title = title;
+                document.querySelector('header p').textContent = description;
+                saveToLocalStorage();
+                alert('Настройки успешно сохранены!');
+            });
+            
+            // Закрытие модального окна с информацией при клике на кнопку закрытия
+            document.querySelector('.close-button').addEventListener('click', closeParticipantModal);
+            // Закрытие модального окна с информацией при клике на затемнение
+            document.getElementById('modalOverlay').addEventListener('click', closeParticipantModal);
+            // Предотвращение закрытия при клике внутри модального окна
+            document.querySelector('.modal-content').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            // Закрытие модального окна при нажатии Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeParticipantModal();
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
